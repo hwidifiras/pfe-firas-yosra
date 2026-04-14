@@ -1,0 +1,294 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  OWNER
+  MANAGER
+  AGENT
+}
+
+enum ChannelType {
+  FACEBOOK
+  LINKEDIN
+  INSTAGRAM
+}
+
+enum PostStatus {
+  DRAFT
+  SCHEDULED
+  PUBLISHED
+  FAILED
+  CANCELED
+}
+
+enum InboxItemType {
+  MESSAGE
+  COMMENT
+}
+
+enum InboxStatus {
+  NEW
+  IN_PROGRESS
+  REPLIED
+  ESCALATED
+  CLOSED
+}
+
+enum ReplyMode {
+  MANUAL
+  ASSISTED
+  AUTO
+}
+
+enum Sentiment {
+  POSITIVE
+  NEUTRAL
+  NEGATIVE
+}
+
+model User {
+  id            String       @id @default(cuid())
+  email         String       @unique
+  passwordHash  String
+  fullName      String
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  memberships   Membership[]
+  refreshTokens RefreshToken[]
+  createdPosts  Post[]       @relation("PostCreator")
+  inboxMessages InboxMessage[] @relation("InboxMessageAuthor")
+  auditLogs     AuditLog[]
+}
+
+model Organization {
+  id                 String              @id @default(cuid())
+  name               String
+  industry           String?
+  defaultLanguage    String              @default("fr")
+  timezone           String              @default("Africa/Tunis")
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+
+  memberships        Membership[]
+  channels           SocialChannel[]
+  posts              Post[]
+  inboxThreads       InboxThread[]
+  knowledgeDocuments KnowledgeDocument[]
+  aiPolicy           AiPolicy?
+  analyticsSnapshots AnalyticsSnapshot[]
+  auditLogs          AuditLog[]
+}
+
+model Membership {
+  id             String       @id @default(cuid())
+  userId         String
+  organizationId String
+  role           Role
+  createdAt      DateTime     @default(now())
+
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, organizationId])
+  @@index([organizationId, role])
+}
+
+model RefreshToken {
+  id         String   @id @default(cuid())
+  userId     String
+  tokenHash  String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model SocialChannel {
+  id                  String       @id @default(cuid())
+  organizationId      String
+  type                ChannelType
+  externalAccountId   String
+  displayName         String
+  accessTokenEnc      String
+  refreshTokenEnc     String?
+  tokenExpiresAt      DateTime?
+  isActive            Boolean      @default(true)
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+
+  organization        Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  postChannels        PostChannel[]
+  inboxThreads        InboxThread[]
+
+  @@unique([organizationId, type, externalAccountId])
+  @@index([organizationId, type])
+}
+
+model Post {
+  id                String        @id @default(cuid())
+  organizationId    String
+  createdById       String
+  content           String
+  mediaUrl          String?
+  scheduledAt       DateTime?
+  publishedAt       DateTime?
+  status            PostStatus    @default(DRAFT)
+  aiGenerated       Boolean       @default(false)
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  organization      Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdBy         User          @relation("PostCreator", fields: [createdById], references: [id])
+  channels          PostChannel[]
+  metrics           PostMetric[]
+
+  @@index([organizationId, status, scheduledAt])
+  @@index([organizationId, createdAt])
+}
+
+model PostChannel {
+  id                String        @id @default(cuid())
+  postId            String
+  channelId         String
+  externalPostId    String?
+  status            PostStatus    @default(DRAFT)
+  errorMessage      String?
+  publishedAt       DateTime?
+
+  post              Post          @relation(fields: [postId], references: [id], onDelete: Cascade)
+  channel           SocialChannel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, channelId])
+  @@index([channelId, status])
+}
+
+model PostMetric {
+  id                String        @id @default(cuid())
+  postId            String
+  channelId         String
+  impressions       Int           @default(0)
+  engagements       Int           @default(0)
+  commentsCount     Int           @default(0)
+  reactionsCount    Int           @default(0)
+  capturedAt        DateTime      @default(now())
+
+  post              Post          @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@index([postId, capturedAt])
+}
+
+model InboxThread {
+  id                String        @id @default(cuid())
+  organizationId    String
+  channelId         String
+  externalThreadId  String
+  type              InboxItemType
+  customerName      String?
+  customerHandle    String?
+  status            InboxStatus   @default(NEW)
+  sentiment         Sentiment     @default(NEUTRAL)
+  lastMessageAt     DateTime?
+  assignedToUserId  String?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  organization      Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  channel           SocialChannel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  messages          InboxMessage[]
+
+  @@unique([channelId, externalThreadId])
+  @@index([organizationId, status, lastMessageAt])
+}
+
+model InboxMessage {
+  id                String        @id @default(cuid())
+  threadId          String
+  authorUserId      String?
+  externalMessageId String?
+  inbound           Boolean
+  content           String
+  mode              ReplyMode?
+  confidenceScore   Float?
+  createdAt         DateTime      @default(now())
+
+  thread            InboxThread   @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  authorUser        User?         @relation("InboxMessageAuthor", fields: [authorUserId], references: [id])
+
+  @@index([threadId, createdAt])
+}
+
+model AiPolicy {
+  id                        String        @id @default(cuid())
+  organizationId            String        @unique
+  autoModeEnabled           Boolean       @default(false)
+  autoConfidenceThreshold   Float         @default(0.75)
+  maxAutoRepliesPerDay      Int           @default(50)
+  businessHoursStart        String        @default("09:00")
+  businessHoursEnd          String        @default("18:00")
+  allowDarija               Boolean       @default(true)
+  allowedIntents            String[]
+  blockedIntents            String[]
+  updatedAt                 DateTime      @updatedAt
+
+  organization              Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+}
+
+model KnowledgeDocument {
+  id                String        @id @default(cuid())
+  organizationId    String
+  title             String
+  sourceType        String
+  content           String
+  embeddingRef      String?
+  approvedByUserId  String?
+  approvedAt        DateTime?
+  createdAt         DateTime      @default(now())
+
+  organization      Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, approvedAt])
+}
+
+model AnalyticsSnapshot {
+  id                    String        @id @default(cuid())
+  organizationId        String
+  snapshotDate          DateTime
+  impressions           Int           @default(0)
+  engagementRate        Float         @default(0)
+  avgResponseTimeMin    Float         @default(0)
+  positiveRate          Float         @default(0)
+  neutralRate           Float         @default(0)
+  negativeRate          Float         @default(0)
+  createdAt             DateTime      @default(now())
+
+  organization          Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, snapshotDate])
+  @@index([organizationId, snapshotDate])
+}
+
+model AuditLog {
+  id                String        @id @default(cuid())
+  organizationId    String
+  actorUserId       String?
+  action            String
+  entityType        String
+  entityId          String?
+  metadataJson      Json?
+  createdAt         DateTime      @default(now())
+
+  organization      Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  actorUser         User?         @relation(fields: [actorUserId], references: [id])
+
+  @@index([organizationId, createdAt])
+  @@index([action, entityType])
+}

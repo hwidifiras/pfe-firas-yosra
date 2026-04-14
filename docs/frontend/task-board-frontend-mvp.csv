@@ -1,0 +1,12 @@
+Sprint,Page,Tache,Definition of Done,Estimation(heures),Dependance
+S1,Auth,Implementer login/register + garde routes,Connexion et redirection role-based fonctionnelles,8,API auth
+S1,AppShell,Sidebar+Topbar+routing prive,Navigation stable et responsive,6,None
+S2,Integrations,Page connexion Facebook/LinkedIn OAuth,Statuts canaux visibles et callback gere,8,API integrations
+S2,Composeur,Form post texte+image+selection canaux,Validation et create post OK,10,API posts + upload
+S3,Calendrier,Vues mois/semaine + details post,Posts planifies affiches et modifiables,10,API calendar
+S4,Inbox,List threads + filtres + detail conversation,Filtres combinables + messages charges,12,API inbox/webhooks
+S4,Inbox Reponse,Actions manuel + assiste,Reponse envoyee et historique maj,8,API reply
+S5,Centre IA,Policies + knowledge docs upload,Seuil/limites/intents editables role-based,10,API ai/knowledge
+S5,Analytics,Dashboard KPI + top posts + sentiment,Widgets synchronises avec periode,10,API analytics
+S6,Polish,Etats loading/empty/error/success globaux,Aucune page bloquante en demo,8,Toutes pages
+S6,Demo,Script demo UI + corrections UX mineures,Parcours jury fluide de bout en bout,6,Toutes pages
