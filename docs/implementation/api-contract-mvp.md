@@ -71,6 +71,19 @@ Exemple `select-pages`:
 - `GET /orgs/:orgId/knowledge/documents`
 - `POST /orgs/:orgId/knowledge/approve/:memoryId`
 
+## Parametres et securite compte
+
+- `GET /orgs/:orgId/settings`
+- `PATCH /orgs/:orgId/settings`
+- `PATCH /auth/change-password`
+- `GET /auth/sessions`
+- `DELETE /auth/sessions/:sessionId`
+- `GET /orgs/:orgId/audit/logs?from=&to=&actor=&action=`
+- 2FA conditionnelle (si backend disponible):
+  - `GET /auth/2fa/status`
+  - `POST /auth/2fa/enable`
+  - `POST /auth/2fa/disable`
+
 ## Analytics
 
 - `GET /orgs/:orgId/analytics/overview?from=&to=`
@@ -94,3 +107,5 @@ Exemple `select-pages`:
 - Toute route `org` exige JWT valide + appartenance org.
 - Les routes policy/auto-mode exigent role `OWNER` ou `MANAGER`.
 - `AGENT` peut repondre, mais ne peut pas modifier les regles globales.
+- Les routes membres/roles et settings organisation exigent `OWNER` ou `MANAGER`.
+- Les routes securite compte (`change-password`, sessions, 2FA) s'appliquent a l'utilisateur authentifie.

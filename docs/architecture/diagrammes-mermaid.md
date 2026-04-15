@@ -35,6 +35,7 @@ flowchart TB
         ANA[Analytics Aggregator]
         AUDIT[Audit & Activity Logs]
         KB[Knowledge Base Service]
+        SETTINGS[Settings Service\nOrg prefs + Account Security\nPassword + Sessions + 2FA*]
     end
 
     AUTH --> ORG
@@ -46,7 +47,14 @@ flowchart TB
     INBOX --> ANA
     AI --> AUDIT
     POSTS --> AUDIT
+    SETTINGS --> AUTH
+    SETTINGS --> ORG
+    SETTINGS --> CH
+    SETTINGS --> AI
+    SETTINGS --> AUDIT
 ```
+
+> *2FA activee si endpoint backend disponible; sinon option "coming soon" au niveau UI MVP.
 
 ## 3) Flux scheduler publication
 

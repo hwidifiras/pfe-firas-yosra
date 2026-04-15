@@ -127,6 +127,12 @@ Visualiser posts planifies/publies et modifier planning.
 - Drawer detail post
 - Actions modifier/annuler
 - Widget suggestion "meilleur horaire"
+- Toolbar calendrier: precedent, aujourd'hui, suivant
+- Panneau filtres: comptes reseaux sociaux (pages), statut publication
+- Filtres "Tags" et "Auteur" en placeholder UI (coming soon) tant que non supportes backend
+- Vue semaine compacte: colonnes exploitant toute la largeur disponible
+- Eviter les scrollbars verticales par colonne/jour (pas de nested scroll)
+- Sidebar auto-collapsee (icones uniquement) sur la route Calendrier, re-ouvrable par l'utilisateur
 
 ### API
 - `GET /orgs/:orgId/calendar?month=YYYY-MM`
@@ -135,6 +141,10 @@ Visualiser posts planifies/publies et modifier planning.
 
 ### Acceptance
 - Deplacement horaire reflechi en DB.
+- Bascule vue Mois/Semaine fonctionnelle.
+- Filtres pages + statut appliques sur la grille.
+- Espace horizontal utilise efficacement en vue semaine (densite visuelle correcte).
+- Absence de scroll vertical interne par colonne (ou justification explicite avec fallback "voir plus").
 
 ---
 
@@ -185,7 +195,29 @@ Afficher les 5 KPI MVP et insights actionnables.
 
 ---
 
-## P8. Centre IA (Policies + Knowledge)
+## P8. IA Workspace (Utilisation modele)
+
+### Objectif
+Permettre l'utilisation quotidienne de l'IA pour generer/améliorer du contenu sans toucher aux regles admin.
+
+### UI
+- Zone de saisie principale (prompt)
+- Suggestions rapides (corriger, reformuler, hashtags, idees)
+- Affichage resultat reutilisable dans Composeur et Inbox
+- Historique session
+- Affichage contexte actif (RAG/documents/langue/mode)
+
+### API
+- `POST /orgs/:orgId/ai/generate-post`
+- `POST /orgs/:orgId/ai/suggest-reply`
+
+### Acceptance
+- Usage fluide quotidien par AGENT/OWNER/MANAGER.
+- Aucune option de policies globales modifiable depuis cette page.
+
+---
+
+## P9. Configuration IA (Policies + Knowledge Admin)
 
 ### Objectif
 Configurer comportements IA et base de connaissance RAG.
@@ -207,6 +239,44 @@ Configurer comportements IA et base de connaissance RAG.
 
 ### Acceptance
 - Roles AGENT ne peuvent pas changer policies globales.
+
+---
+
+## P10. Parametres (Organisation, Roles, Integrations, Securite)
+
+### Objectif
+Centraliser la configuration transversale du produit dans une page unique a onglets, conforme au scope MVP.
+
+### UI
+- Onglets: Organisation, Membres & Roles, Reseaux sociaux, Publications, Inbox, IA, Securite du compte, Journal d'audit.
+- Securite du compte:
+  - Changer mot de passe.
+  - Sessions actives (consultation + deconnexion session).
+  - Double authentification (2FA) si disponible backend, sinon bloc "coming soon" explicite.
+- RBAC strict:
+  - AGENT: lecture majoritaire + edition limitee profil perso.
+  - MANAGER: edition operationnelle selon regles organisation.
+  - OWNER: controle complet.
+- Etats obligatoires: chargement, vide, erreur, succes.
+
+### API
+- `GET /orgs/:orgId/members`
+- `PATCH /orgs/:orgId/members/:memberId/role`
+- `GET /orgs/:orgId/channels`
+- `GET /orgs/:orgId/channels/available-pages?provider=facebook|linkedin`
+- `POST /orgs/:orgId/channels/:channelId/select-pages`
+- `GET /orgs/:orgId/ai/policies`
+- `GET /orgs/:orgId/audit/logs`
+- Endpoints auth/security (mot de passe / 2FA) selon disponibilite backend.
+
+### Acceptance
+- Page Parametres accessible depuis la navigation principale.
+- Les onglets couvrent tous les parametres MVP transversaux sans ajout hors scope.
+- Les actions sensibles sont role-protegees et confirmentes (modif role, deconnexion canal, securite).
+- Le changement de mot de passe est pris en charge.
+- La 2FA est traitee de facon conditionnelle:
+  - active/desactive si backend pret,
+  - sinon visible en "coming soon" sans casser l'UX.
 
 ---
 

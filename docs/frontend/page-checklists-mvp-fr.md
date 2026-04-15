@@ -40,9 +40,25 @@
 - [ ] Top posts coherent
 - [ ] Sentiment affiche
 
-## Centre IA
+## IA Workspace
+- [ ] Prompt principal utilisable
+- [ ] Suggestions rapides fonctionnelles
+- [ ] Resultat reutilisable dans Composeur/Inbox
+- [ ] Historique session visible
+
+## Configuration IA
 - [ ] Policies chargees et sauvegardees
 - [ ] Limites configurables
 - [ ] Intents autorises/interdits modifiables
 - [ ] Upload knowledge docs
 - [ ] Validation Manager/Owner uniquement
+
+## Parametres
+- [ ] Onglets presents: Organisation, Membres & Roles, Reseaux sociaux, Publications, Inbox, IA, Securite du compte, Journal d'audit
+- [ ] RBAC applique sur actions sensibles (Owner/Manager/Agent)
+- [ ] Changement mot de passe disponible
+- [ ] Sessions actives visibles + deconnexion session
+- [ ] 2FA geree conditionnellement (activee si backend pret, sinon coming soon explicite)
+- [ ] Integrations sociales et pages connectees gerables par nom
+- [ ] Journal d'audit charge en lecture seule
+- [ ] Etats loading/empty/error/success couverts

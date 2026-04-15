@@ -97,17 +97,23 @@ Hypothese: 2 developpeurs (Front + Back) avec synchronisation quotidienne courte
 ### Objectifs
 - Deploiement online, hardening, repetition soutenance.
 - Finalisation rapport FR et annexes.
+- Finaliser la page Parametres transversale (organisation, roles, reseaux, securite compte).
 
 ### Taches Front
 - Polish UI demo, gestion erreurs, etats vides.
 - Script demo jury guide.
+- Page Parametres a onglets (Organisation, Membres & Roles, Reseaux, Publications, Inbox, IA, Securite du compte, Journal d'audit).
+- Section Securite du compte: changer mot de passe, sessions actives, bloc 2FA conditionnel (actif si backend pret, sinon coming soon).
 
 ### Taches Back
 - Logging/audit complet, rate limiting, monitoring minimum.
 - Validation permissions APIs + fallback Instagram mock.
+- Endpoints securite compte finalises (mot de passe, sessions) + integration 2FA si faisable dans la fenetre projet.
+- Si 2FA non finalisee backend: endpoint/status de capacite pour afficher proprement "coming soon" cote frontend.
 
 ### Livrable
 - Demo online stable + dossier PFE complet.
+- Parametres MVP operationnels avec securite compte (mot de passe + sessions) et 2FA conditionnelle.
 
 ## Jalons de controle
 

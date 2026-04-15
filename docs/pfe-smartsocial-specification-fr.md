@@ -12,6 +12,7 @@ Fournir une plateforme unique permettant a une PME e-commerce de planifier ses p
 
 ### Inclus
 - Authentification et gestion des roles: Owner, Manager, Agent.
+- Page Parametres a onglets (organisation, membres/roles, reseaux sociaux, publications, inbox, IA, securite compte, journal d'audit).
 - Connexion des canaux: Facebook Page et LinkedIn Page.
 - Publication multi-canaux: texte + image, immediate ou planifiee.
 - Calendrier editorial: affichage mensuel/hebdomadaire, statut des posts.
@@ -25,6 +26,7 @@ Fournir une plateforme unique permettant a une PME e-commerce de planifier ses p
   - Auto securise
 - Dashboard analytics MVP (5 KPI): impressions, engagement rate, top posts, temps moyen de reponse, sentiment commentaires.
 - Journalisation des actions IA/humaines (audit).
+- Securite du compte: changement mot de passe, sessions actives (deconnexion), 2FA conditionnelle (activee si backend disponible, sinon "coming soon").
 
 ### Hors-MVP (advanced)
 - Analyse concurrentielle auto live.
@@ -55,6 +57,7 @@ Fournir une plateforme unique permettant a une PME e-commerce de planifier ses p
 5. Repondre en manuel/assiste/auto.
 6. Suivre KPI et performance des publications.
 7. Ajuster les regles IA et limites d'automatisation.
+8. Gerer parametres organisationnels et securite du compte.
 
 ## 6. User stories MVP
 
@@ -94,10 +97,13 @@ Fournir une plateforme unique permettant a une PME e-commerce de planifier ses p
 - Le mode auto respecte strictement les regles de securite.
 - Dashboard affiche les 5 KPI avec donnees coherentes.
 - Les actions sensibles sont journalisees et auditables.
+- La page Parametres couvre les sections MVP avec restrictions RBAC conformes.
+- Le changement de mot de passe et la gestion des sessions sont operationnels.
+- La 2FA est geree selon disponibilite backend (activee si possible, sinon "coming soon" explicite).
 
 ## 9. Exigences non fonctionnelles
 
-- Securite: JWT + refresh token, RBAC strict, logs d'audit.
+- Securite: JWT + refresh token, RBAC strict, logs d'audit, gestion mot de passe/sessions, 2FA conditionnelle.
 - Performance: affichage inbox < 2s sur volume moderate.
 - Disponibilite demo: deploiement online operationnel.
 - Maintenabilite: architecture modulaire, conventions de code claires.
